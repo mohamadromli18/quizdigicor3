@@ -213,6 +213,7 @@
             line-height: 1.6;
             min-height: 180px;
             margin-bottom: 30px;
+            transition: font-size 0.3s ease; /* Transisi agar pengecilan huruf lebih halus */
         }
 
         .answer-box {
@@ -385,8 +386,13 @@
             { category: "Tebak Kata", type: "Tebak Istilah", q: "Kapal • Dermaga • Pindah<br><br>Aku adalah...", a: "SHIFTING" },
             { category: "Tebak Kata", type: "Tebak Istilah", q: "Kapal • Sandar • Jadwal<br><br>Aku adalah...", a: "BERTHING" },
             { category: "Tebak Kata", type: "Tebak Istilah", q: "Kontainer • Kapal • Crane<br><br>Aku adalah...", a: "LOADING" },
-            // Kategori ke-4: Petunjuk Hitam Hijau
-            { category: "Hitam Hijau", type: "System_Calibration", q: "INSTRUCTIONS:<br>1. TARGET ACQUIRED: Berdiri & cari satu pasangan (1 vs 1).<br>2. ALIGNMENT: Julurkan tangan. Kanan di atas, Kiri di bawah.<br>3. ROLE ASSIGNMENT: Tentukan siapa tim [HITAM] dan [HIJAU].<br>4. EXECUTION: Dengarkan MC! Jika namamu dipanggil, TEPUK tangan lawan! Jika tidak, MENGHINDAR!<br><br>⚠️ WARNING: BEWARE OF AUDIO TRAPS (Hi..lang, Hi..dung).", a: "CALIBRATION COMPLETE.<br>READY TO PLAY!" }
+            // Kategori ke-4: Petunjuk Hitam Hijau yang sudah diperbaiki
+            { 
+                category: "Hitam Hijau", 
+                type: "System_Calibration", 
+                q: "Instruksi:<br>1. Berdiri dan cari pasangan (1 vs 1).<br>2. Tangan Kanan di atas, Kiri di bawah.<br>3. Tentukan siapa tim [HITAM] dan [HIJAU].<br>4. Dengarkan MC! Jika timmu dipanggil, TEPUK tangan lawan! Jika tidak, MENGHINDAR!", 
+                a: "READY TO PLAY!" 
+            }
         ];
 
         let activeDataSet = []; 
@@ -465,6 +471,16 @@
                 answerBox.innerHTML = "";
                 if(activeDataSet.length > 0) {
                     let currentQ = activeDataSet[currentIndex];
+                    
+                    // --- LOGIKA BARU: MENGATUR UKURAN HURUF OTOMATIS ---
+                    const qBox = document.getElementById('questionBox');
+                    if (currentQ.type === "System_Calibration") {
+                        qBox.style.fontSize = "1.4rem"; // Mengecilkan huruf khusus Hitam Hijau
+                    } else {
+                        qBox.style.fontSize = "1.8rem"; // Ukuran huruf normal
+                    }
+                    // ---------------------------------------------------
+
                     let formattedText = `[ PROTOCOL: ${currentQ.type.toUpperCase()} ]<br><br>${currentQ.q}`;
                     startTypewriter(formattedText);
                 }
