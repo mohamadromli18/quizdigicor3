@@ -195,7 +195,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            width: 50%;
+            width: 60%; /* Diperlebar sedikit agar tombol ke-4 muat dengan baik */
         }
 
         .category-buttons button {
@@ -209,14 +209,14 @@
         }
 
         .question-box {
-            font-size: 2rem;
-            line-height: 1.5;
+            font-size: 1.8rem;
+            line-height: 1.6;
             min-height: 180px;
             margin-bottom: 30px;
         }
 
         .answer-box {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
@@ -289,6 +289,7 @@
 
     <!-- Logo Placement -->
     <div class="logo-container">
+        <!-- Pastikan nama file ini sama persis dengan yang ada di folder Anda -->
         <img src="danantara logo-putih.png" alt="Logo Danantara">
         <img src="LOGO-TAGLINE-PUTIH_Pelindo.png" alt="Logo Pelindo">
     </div>
@@ -314,6 +315,7 @@
                 <button onclick="startCategory('Tebak Siapa Aku')">[ 1. TEBAK SIAPA AKU ]</button>
                 <button onclick="startCategory('Tebak Emoji')">[ 2. TEBAK EMOJI ]</button>
                 <button onclick="startCategory('Tebak Kata')">[ 3. TEBAK KATA ]</button>
+                <button onclick="startCategory('Hitam Hijau')">[ 4. PROTOCOL: HITAM_HIJAU ]</button>
             </div>
         </div>
 
@@ -382,7 +384,9 @@
             { category: "Tebak Emoji", type: "Tebak Emoji", q: "🚢 ⏰ 😱<br><br>Aku adalah...", a: "KAPAL TERLAMBAT" },
             { category: "Tebak Kata", type: "Tebak Istilah", q: "Kapal • Dermaga • Pindah<br><br>Aku adalah...", a: "SHIFTING" },
             { category: "Tebak Kata", type: "Tebak Istilah", q: "Kapal • Sandar • Jadwal<br><br>Aku adalah...", a: "BERTHING" },
-            { category: "Tebak Kata", type: "Tebak Istilah", q: "Kontainer • Kapal • Crane<br><br>Aku adalah...", a: "LOADING" }
+            { category: "Tebak Kata", type: "Tebak Istilah", q: "Kontainer • Kapal • Crane<br><br>Aku adalah...", a: "LOADING" },
+            // Kategori ke-4: Petunjuk Hitam Hijau
+            { category: "Hitam Hijau", type: "System_Calibration", q: "INSTRUCTIONS:<br>1. TARGET ACQUIRED: Berdiri & cari satu pasangan (1 vs 1).<br>2. ALIGNMENT: Julurkan tangan. Kanan di atas, Kiri di bawah.<br>3. ROLE ASSIGNMENT: Tentukan siapa tim [HITAM] dan [HIJAU].<br>4. EXECUTION: Dengarkan MC! Jika namamu dipanggil, TEPUK tangan lawan! Jika tidak, MENGHINDAR!<br><br>⚠️ WARNING: BEWARE OF AUDIO TRAPS (Hi..lang, Hi..dung).", a: "CALIBRATION COMPLETE.<br>READY TO PLAY!" }
         ];
 
         let activeDataSet = []; 
@@ -480,7 +484,13 @@
             revealSound.volume = 0.5;
             revealSound.play().catch(e => console.log("Audio play prevented"));
             
-            answerBox.innerHTML = `JAWABAN: ${activeDataSet[currentIndex].a}`;
+            // Logika khusus agar tulisan jawaban untuk kalibrasi tidak menggunakan kata "JAWABAN:"
+            if (activeDataSet[currentIndex].type === "System_Calibration") {
+                answerBox.innerHTML = `> ${activeDataSet[currentIndex].a} <`;
+            } else {
+                answerBox.innerHTML = `JAWABAN: ${activeDataSet[currentIndex].a}`;
+            }
+            
             answerBox.classList.add('visible');
         }
 
