@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGICORE // COMMAND_CENTER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --neon-green: #00e5ff; /* Biru Techno/Cyberpunk */
+            --bg-color: #050505;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Container untuk Logo Kiri dan Kanan */
+        .logo-container {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            right: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .logo-container img {
+            height: 35px; 
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0px 0px 5px rgba(0, 229, 255, 0.4));
+        }
+
+        /* Scanline Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Kotak Kuis Diperbesar */
+        .container {
+            width: 90%; 
+            max-width: 900px; 
+            border: 2px solid var(--neon-green);
+            padding: 50px; 
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); 
+            position: relative;
+            z-index: 3;
+            background: rgba(0, 15, 30, 0.8); 
+            margin-top: 50px; 
+        }
+
+        .header {
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--neon-green);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            animation: glitch-skew 1s infinite linear alternate-reverse;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(13px, 9999px, 98px, 0); }
+            5% { clip: rect(80px, 9999px, 78px, 0); }
+            10% { clip: rect(3px, 9999px, 83px, 0); }
+            15% { clip: rect(51px, 9999px, 49px, 0); }
+            20% { clip: rect(93px, 9999px, 73px, 0); }
+            100% { clip: rect(12px, 9999px, 94px, 0); }
+        }
+
+        /* ---------------- JARVIS AI LOADING ANIMATION ---------------- */
+        #loadingScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+
+        .ai-spinner {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 30px;
+        }
+
+        .ai-spinner .ring1, .ai-spinner .ring2 {
+            position: absolute;
+            border-radius: 50%;
+            border: 4px solid transparent;
+        }
+
+        .ai-spinner .ring1 {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-top: 4px solid var(--neon-green);
+            border-bottom: 4px solid var(--neon-green);
+            animation: spin 1.5s linear infinite;
+        }
+
+        .ai-spinner .ring2 {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-left: 4px solid var(--neon-green);
+            border-right: 4px solid var(--neon-green);
+            animation: spin-reverse 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #loadingText {
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px var(--neon-green);
+            letter-spacing: 2px;
+        }
+        /* ------------------------------------------------------------- */
+
+        /* Bagian Menu Kategori */
+        #categoryMenu {
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            min-height: 250px;
+        }
+
+        #categoryMenu h2 {
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 50%;
+        }
+
+        .category-buttons button {
+            font-size: 1.5rem;
+            padding: 15px;
+        }
+
+        /* Bagian Kuis Utama */
+        #quizSection {
+            display: none; 
+        }
+
+        .question-box {
+            font-size: 2rem;
+            line-height: 1.5;
+            min-height: 180px;
+            margin-bottom: 30px;
+        }
+
+        .answer-box {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+            min-height: 60px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .answer-box.visible {
+            opacity: 1;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        button {
+            background: transparent;
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            border: 1px solid var(--neon-green);
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        button:hover {
+            background: var(--neon-green);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 15px;
+            height: 30px;
+            background-color: var(--neon-green);
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ---------------- SIGNATURE EXCLUSIVE ---------------- */
+        .signature {
+            position: fixed;
+            bottom: 15px;
+            right: 25px;
+            font-size: 0.75rem;
+            color: rgba(0, 229, 255, 0.5); /* Semi transparan agar elegan */
+            letter-spacing: 1px;
+            z-index: 20;
+            pointer-events: none;
+            text-shadow: 0 0 5px rgba(0, 229, 255, 0.2);
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo Placement -->
+    <div class="logo-container">
+        <img src="danantara logo-putih.png" alt="Logo Danantara">
+        <img src="LOGO-TAGLINE-PUTIH_Pelindo.png" alt="Logo Pelindo">
+    </div>
+
+    <div class="container">
+        <div class="header glitch" data-text="SISTEM://DIGICOR3/ICE_BREAKING_PROTOCOL">
+            SISTEM://DIGICOR3/ICE_BREAKING_PROTOCOL
+        </div>
+
+        <!-- Tampilan Loading AI/Jarvis -->
+        <div id="loadingScreen">
+            <div class="ai-spinner">
+                <div class="ring1"></div>
+                <div class="ring2"></div>
+            </div>
+            <div id="loadingText">> INITIALIZING DIGICOR3 KERNEL...</div>
+        </div>
+
+        <!-- Tampilan Menu Pilihan Kategori -->
+        <div id="categoryMenu">
+            <h2>> PILIH_CATEGORY:</h2>
+            <div class="category-buttons">
+                <button onclick="startCategory('Tebak Siapa Aku')">[ 1. TEBAK SIAPA AKU ]</button>
+                <button onclick="startCategory('Tebak Emoji')">[ 2. TEBAK EMOJI ]</button>
+                <button onclick="startCategory('Tebak Kata')">[ 3. TEBAK KATA ]</button>
+            </div>
+        </div>
+
+        <!-- Tampilan Kuis Utama -->
+        <div id="quizSection">
+            <div class="question-box" id="questionBox">
+                <span id="textTarget"></span><span class="cursor"></span>
+            </div>
+
+            <div class="answer-box" id="answerBox">
+                DATA_NOT_FOUND
+            </div>
+
+            <div class="controls">
+                <button onclick="backToMenu()">[ KEMBALI_KE_MENU ]</button>
+                <button onclick="revealAnswer()">[ EXECUTE: JAWABAN ]</button>
+                <button onclick="nextQuestion()">[ NEXT_QUESTION ]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signature Keren di Kanan Bawah -->
+    <div class="signature">Special Made for Digicor3 2026.</div>
+
+    <!-- Audio untuk efek suara -->
+    <audio id="typeSound" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
+    <audio id="revealSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+    <script>
+        // Proses Booting AI
+        window.onload = () => {
+            const loadingText = document.getElementById('loadingText');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const categoryMenu = document.getElementById('categoryMenu');
+            
+            const bootSequence = [
+                "> INITIALIZING DIGICOR3 KERNEL...",
+                "> CONNECTING TO MAINFRAME...",
+                "> BYPASSING SECURITY PROTOCOLS...",
+                "> ACCESS GRANTED. DIGICOR3 ONLINE."
+            ];
+            
+            let bootIndex = 0;
+            
+            const bootInterval = setInterval(() => {
+                bootIndex++;
+                if (bootIndex < bootSequence.length) {
+                    loadingText.innerText = bootSequence[bootIndex];
+                } else {
+                    clearInterval(bootInterval);
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        categoryMenu.style.display = 'flex';
+                    }, 800);
+                }
+            }, 1200);
+        };
+
+        // Database Master
+        const masterDataSet = [
+            { category: "Tebak Siapa Aku", type: "Tebak Siapa Aku", q: "Aku memiliki banyak pintu.<br>Truk keluar masuk melewatiku.<br>Aku dijaga petugas.<br>Aku adalah...", a: "GATE PELABUHAN" },
+            { category: "Tebak Siapa Aku", type: "Tebak Siapa Aku", q: "Aku bisa rusak.<br>Kalau aku mati, banyak orang panik.<br>Semua aplikasi bergantung padaku.<br>Aku adalah...", a: "SERVER" },
+            { category: "Tebak Siapa Aku", type: "Tebak Siapa Aku", q: "Aku bisa 20 kaki.<br>Aku bisa 40 kaki.<br>Aku sering berada di atas kapal.<br>Aku adalah...", a: "KONTAINER" },
+            { category: "Tebak Emoji", type: "Tebak Emoji", q: "⚓ 🚢 🏠<br><br>Aku adalah...", a: "TERMINAL PELABUHAN" },
+            { category: "Tebak Emoji", type: "Tebak Emoji", q: "🚢 📦 📦 📦<br><br>Aku adalah...", a: "KAPAL KONTAINER" },
+            { category: "Tebak Emoji", type: "Tebak Emoji", q: "🚢 ⏰ 😱<br><br>Aku adalah...", a: "KAPAL TERLAMBAT" },
+            { category: "Tebak Kata", type: "Tebak Istilah", q: "Kapal • Dermaga • Pindah<br><br>Aku adalah...", a: "SHIFTING" },
+            { category: "Tebak Kata", type: "Tebak Istilah", q: "Kapal • Sandar • Jadwal<br><br>Aku adalah...", a: "BERTHING" },
+            { category: "Tebak Kata", type: "Tebak Istilah", q: "Kontainer • Kapal • Crane<br><br>Aku adalah...", a: "LOADING" }
+        ];
+
+        let activeDataSet = []; 
+        let currentIndex = 0;
+        let isTyping = false;
+        let typeTimeout;
+
+        const categoryMenu = document.getElementById('categoryMenu');
+        const quizSection = document.getElementById('quizSection');
+        const textTarget = document.getElementById('textTarget');
+        const answerBox = document.getElementById('answerBox');
+        const typeSound = document.getElementById('typeSound');
+        const revealSound = document.getElementById('revealSound');
+
+        function startCategory(selectedCategory) {
+            activeDataSet = masterDataSet.filter(item => item.category === selectedCategory);
+            currentIndex = 0;
+            
+            categoryMenu.style.display = 'none';
+            quizSection.style.display = 'block';
+            
+            loadQuestion();
+        }
+
+        function backToMenu() {
+            clearTimeout(typeTimeout);
+            isTyping = false;
+            
+            quizSection.style.display = 'none';
+            categoryMenu.style.display = 'flex';
+        }
+
+        function startTypewriter(htmlContent) {
+            isTyping = true;
+            textTarget.innerHTML = "";
+            let i = 0;
+            
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = htmlContent;
+            let textToType = tempDiv.innerHTML; 
+            
+            function type() {
+                if (i < textToType.length) {
+                    if (textToType.charAt(i) === '<') {
+                        let tag = "";
+                        while (textToType.charAt(i) !== '>' && i < textToType.length) {
+                            tag += textToType.charAt(i);
+                            i++;
+                        }
+                        tag += '>';
+                        textTarget.innerHTML += tag;
+                        i++;
+                    } else {
+                        textTarget.innerHTML += textToType.charAt(i);
+                        i++;
+                    }
+                    
+                    if(i % 3 === 0) {
+                        typeSound.volume = 0.2;
+                        typeSound.currentTime = 0;
+                        typeSound.play().catch(e => console.log("Audio play prevented by browser"));
+                    }
+                    
+                    typeTimeout = setTimeout(type, 30);
+                } else {
+                    isTyping = false;
+                }
+            }
+            type();
+        }
+
+        function loadQuestion() {
+            clearTimeout(typeTimeout);
+            answerBox.classList.remove('visible');
+            setTimeout(() => {
+                answerBox.innerHTML = "";
+                if(activeDataSet.length > 0) {
+                    let currentQ = activeDataSet[currentIndex];
+                    let formattedText = `[ PROTOCOL: ${currentQ.type.toUpperCase()} ]<br><br>${currentQ.q}`;
+                    startTypewriter(formattedText);
+                }
+            }, 300);
+        }
+
+        function revealAnswer() {
+            if(activeDataSet.length === 0) return;
+            
+            if (isTyping) {
+                clearTimeout(typeTimeout);
+                let currentQ = activeDataSet[currentIndex];
+                textTarget.innerHTML = `[ PROTOCOL: ${currentQ.type.toUpperCase()} ]<br><br>${currentQ.q}`;
+                isTyping = false;
+            }
+            
+            revealSound.volume = 0.5;
+            revealSound.play().catch(e => console.log("Audio play prevented"));
+            
+            answerBox.innerHTML = `JAWABAN: ${activeDataSet[currentIndex].a}`;
+            answerBox.classList.add('visible');
+        }
+
+        function nextQuestion() {
+            if(activeDataSet.length === 0) return;
+            
+            currentIndex++;
+            if (currentIndex >= activeDataSet.length) {
+                currentIndex = 0; 
+            }
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
